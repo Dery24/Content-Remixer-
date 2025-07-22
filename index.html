@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Remixer</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1em; max-width: 600px; margin: auto; }
+    textarea, select, button { width: 100%; margin-top: 1em; padding: 0.5em; }
+    #output { white-space: pre-wrap; background: #f4f4f4; padding: 1em; border-radius: 8px; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h2>Content Remixer</h2>
+  <textarea id="inputText" rows="5" placeholder="Paste your content here..."></textarea>
+  <select id="remixType">
+    <option value="Tweet Thread">Tweet Thread</option>
+    <option value="LinkedIn Post">LinkedIn Post</option>
+    <option value="Short Story">Short Story</option>
+  </select>
+  <button onclick="remixContent()">Remix</button>
+  <div id="output"></div>
+
+  <script>
+    async function remixContent() {
+      const content = document.getElementById("inputText").value;
+      const remixType = document.getElementById("remixType").value;
+      const output = document.getElementById("output");
+      output.innerText = "Remixing...";
+      try {
+        const res = await fetch("/api/remix", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content, remixType })
+        });
+        const data = await res.json();
+        output.innerText = data.remix || data.error || "Something went wrong.";
+      } catch (err) {
+        output.innerText = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
